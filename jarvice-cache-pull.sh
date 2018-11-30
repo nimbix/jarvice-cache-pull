@@ -29,7 +29,8 @@
 # policies, either expressed or implied, of Nimbix, Inc.
 #
 set -e
-pull_interval=""
+# Set pull interval with environment variable or -i flag 
+pull_interval=${PULL_INTERVAL}
 while getopts "i:" opt; do
     case "$opt" in
         i)
@@ -47,7 +48,9 @@ while true; do
     images=$(( $(echo $config | jq 'length') - 1 ))
     for image in $(seq 0 $images); do
         pull_image=$(echo $config | jq -r .[$image].$arch)
-        [[ -z ${pull_image} ]] || docker pull ${pull_image}
+        if [ ! -z ${pull_image} ]; then
+            docker pull ${pull_image}
+        fi
     done
     sleep ${pull_interval}
 done

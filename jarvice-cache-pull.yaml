@@ -13,7 +13,7 @@ spec:
       containers:
       - name: jarvice-cache-pull 
         image: kenhill/jarvice-cache-pull:latest
-        command: [ "/usr/local/bin/jarvice-cache-pull.sh", "-i ${PULL_INTERVAL}"]
+        command: [ "/usr/local/bin/jarvice-cache-pull.sh"]
         env:
           - name: PULL_INTERVAL
             valueFrom:
