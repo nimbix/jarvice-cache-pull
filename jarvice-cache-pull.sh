@@ -48,7 +48,7 @@ while true; do
     images=$(( $(echo $config | jq 'length') - 1 ))
     for image in $(seq 0 $images); do
         pull_image=$(echo $config | jq -r .[$image].$arch)
-        if [ ! -z ${pull_image} ]; then
+        if [ "${pull_image}" != "null" ]; then
             docker pull ${pull_image}
         fi
     done
