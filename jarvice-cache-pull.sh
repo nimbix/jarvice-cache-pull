@@ -46,7 +46,8 @@ while true; do
     config=$(cat /etc/config/image.config)
     images=$(( $(echo $config | jq 'length') - 1 ))
     for image in $(seq 0 $images); do
-        echo $config | jq -r .[$image].$arch | xargs docker pull
+        pull_image=$(echo $config | jq -r .[$image].$arch)
+        [[ -z ${pull_image} ]] || docker pull ${pull_image}
     done
     sleep ${pull_interval}
 done

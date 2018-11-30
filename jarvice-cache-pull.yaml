@@ -12,9 +12,8 @@ spec:
       tolerations:
       containers:
       - name: jarvice-cache-pull 
-        image: ubuntu:latest
-        command: [ "/bin/sh", "-c", "while true; do echo hello world; sleep ${PULL_INTERVAL}; done" ]
-        #        command: [ "/usr/local/bin/jarvice-cache-pull.sh", "-i ${PULL_INTERVAL}"]
+        image: kenhill/jarvice-cache-pull:latest
+        command: [ "/usr/local/bin/jarvice-cache-pull.sh", "-i ${PULL_INTERVAL}"]
         env:
           - name: PULL_INTERVAL
             valueFrom:
