@@ -2,59 +2,49 @@ apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
   name: jarvice-cache-pull  
-  namespace: kube-system
+  namespace: jarvice-khill
 spec:
   template:
     metadata:
       labels:
         name: jarvice-cache-pull 
     spec:
+      tolerations:
       containers:
       - name: jarvice-cache-pull 
         image: ubuntu:latest
-        command: [ "/bin/sh", "-c"]
-        args:
-            - >
-                apt-get update && apt install -y jq libltdl7;
-                arch=$(uname -m);
-                if [ "$arch" = "x86_64" ]; then
-                    arch=amd64;
-                fi;
-                while true; do
-                    config=$(cat /etc/config/image.config);
-                    images=$(( $(echo $config | jq 'length') - 1 ));
-                    for image in $(seq 0 $images); do
-                        echo $config | jq -r .[$image].$arch | xargs \
-                                docker pull;
-                    done
-                    sleep ${PULL_INTERVAL}
-                done
+        command: [ "/bin/sh", "-c", "while true; do echo hello world; sleep ${PULL_INTERVAL}; done" ]
+        #        command: [ "/usr/local/bin/jarvice-cache-pull.sh", "-i ${PULL_INTERVAL}"]
         env:
-            - name: PULL_INTERVAL
-              valueFrom:
-                  configMapKeyRef:
-                      name: image-cache
-                      key: interval
+          - name: PULL_INTERVAL
+            valueFrom:
+              configMapKeyRef:
+                name: image-cache
+                key: interval
         resources:
           limits:
-            memory: 200Mi
+            memory: 1024Mi
           requests:
             cpu: 100m
-            memory: 200Mi
+            memory: 1024Mi
         volumeMounts:
         - name: config-volume 
           mountPath: /etc/config
-        - name: docker
-          mountPath: /usr/bin/docker
         - name: docker-sock
           mountPath: /var/run/docker.sock
+        - name: docker-secret
+          mountPath: /root/.docker/config.json
+          subPath: config.json
       volumes:
       - name: config-volume
         configMap:
           name: image-cache
-      - name: docker
-        hostPath:
-            path: /usr/bin/docker 
       - name: docker-sock
         hostPath:
-            path: /var/run/docker.sock 
+          path: /var/run/docker.sock
+      - name: docker-secret
+        secret:
+          secretName: jarvice-docker
+          items:
+          - key: "khill-config.json"
+            path: config.json
