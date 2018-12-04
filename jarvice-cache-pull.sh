@@ -38,29 +38,36 @@ while getopts "i:" opt; do
     esac
 done
 [[ -z ${pull_interval} ]] && exit 1
+# Find worker architecture
 arch=$(uname -m)
 if [ "$arch" = "x86_64" ]; then
     arch=amd64
 fi
 while true; do
+    # Get list of images from Config Map
     config=$(cat /etc/config/image.config)
+    # Find number of images in cache
     images=$(( $(echo $config | jq 'length') - 1 ))
     for image in $(seq 0 $images); do
         private=$(echo $config | jq -r .[$image].private)
         reg=$(echo $config | jq -r .[$image].registry)
+        # Login to Docker registry if image is private
         if [ "$private" == "true" ]; then
             user=$(echo $config | jq -r .[$image].config)
             cp /root/.docker/${user}/config.json /root/.docker/config.json
             docker login ${reg} &> /dev/null
         fi
+        # Find location of image for architecture
         pull_image=$(echo $config | jq -r .[$image].arch.$arch)
         if [ "${pull_image}" != "null" ]; then
             echo "Pulling ${pull_image} from ${reg}"
+            # Try to pull image from Docker registry
             docker pull ${pull_image} &> /dev/null
             if [ "$?" -ne "0" ]; then
                 echo "ERROR: failed pulling ${pull_image} from ${reg}"
             fi
         fi
     done
+    # Pause between iterations (seconds)
     sleep ${pull_interval}
 done

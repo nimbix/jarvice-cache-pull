@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
   name: jarvice-cache-pull  
-  namespace: jarvice-khill
+  namespace: jarvice-testing
 spec:
   template:
     metadata:
@@ -12,7 +12,7 @@ spec:
       tolerations:
       containers:
       - name: jarvice-cache-pull 
-        image: kenhill/jarvice-cache-pull:latest
+        image: nimbix/jarvice-cache-pull:latest
         command: [ "/usr/local/bin/jarvice-cache-pull.sh"]
         env:
           - name: PULL_INTERVAL
@@ -43,7 +43,7 @@ spec:
           path: /var/run/docker.sock
       - name: jarvice-docker
         secret:
-          secretName: khill-pull-secret
+          secretName: jarvice-docker
           items:
           - key: ".dockerconfigjson"
             path: config.json
