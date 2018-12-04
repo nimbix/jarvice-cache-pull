@@ -28,7 +28,6 @@
 # those of the authors and should not be interpreted as representing official 
 # policies, either expressed or implied, of Nimbix, Inc.
 #
-set -e
 # Set pull interval with environment variable or -i flag 
 pull_interval=${PULL_INTERVAL}
 while getopts "i:" opt; do
@@ -47,9 +46,18 @@ while true; do
     config=$(cat /etc/config/image.config)
     images=$(( $(echo $config | jq 'length') - 1 ))
     for image in $(seq 0 $images); do
-        pull_image=$(echo $config | jq -r .[$image].$arch)
+        private=$(echo $config | jq -r .[$image].private)
+        if [ "$private" == "true" ]; then
+            user=$(echo $config | jq -r .[$image].config)
+            reg=$(echo $config | jq -r .[$image].registry)
+            docker login --config "/root/.docker/${user}" ${reg} &> /dev/null
+        pull_image=$(echo $config | jq -r .[$image].arch.$arch)
         if [ "${pull_image}" != "null" ]; then
-            docker pull ${pull_image}
+            echo "Pulling ${pull_image} from ${reg}"
+            docker pull ${pull_image} &> /dev/null
+            if [ "$?" -ne "0" ]; then
+                echo "ERROR: failed pulling ${pull_image} from ${reg}"
+            fi
         fi
     done
     sleep ${pull_interval}

@@ -31,8 +31,8 @@ spec:
           mountPath: /etc/config
         - name: docker-sock
           mountPath: /var/run/docker.sock
-        - name: docker-secret
-          mountPath: /root/.docker/config.json
+        - name: jarvice-docker 
+          mountPath: /root/.docker/jarvice-docker/config.json
           subPath: config.json
       volumes:
       - name: config-volume
@@ -41,9 +41,9 @@ spec:
       - name: docker-sock
         hostPath:
           path: /var/run/docker.sock
-      - name: docker-secret
+      - name: jarvice-docker
         secret:
-          secretName: jarvice-docker
+          secretName: khill-pull-secret
           items:
-          - key: "khill-config.json"
+          - key: ".dockerconfigjson"
             path: config.json
