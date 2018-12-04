@@ -81,6 +81,7 @@ done
 [[ -z ${github_token} ]] && my_error "missing GitHub access token"
 # Check for docker
 which docker &> /dev/null || my_error "missing docker CLI"
+echo "Enter ${docker_reg} password for ${docker_user}"
 docker login -u ${docker_user} ${docker_reg}
 docker build --build-arg LSB_REL_NAME=${ubuntu_rel} -t ${docker_repo}:amd64 .
 docker push ${docker_repo}:amd64
