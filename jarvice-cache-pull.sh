@@ -50,7 +50,8 @@ while true; do
         if [ "$private" == "true" ]; then
             user=$(echo $config | jq -r .[$image].config)
             reg=$(echo $config | jq -r .[$image].registry)
-            docker login --config "/root/.docker/${user}" ${reg} &> /dev/null
+            cp /root/.docker/${user}/config.json /root/.docker/config.json
+            docker login ${reg} &> /dev/null
         fi
         pull_image=$(echo $config | jq -r .[$image].arch.$arch)
         if [ "${pull_image}" != "null" ]; then
