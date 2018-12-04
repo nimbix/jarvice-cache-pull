@@ -47,9 +47,9 @@ while true; do
     images=$(( $(echo $config | jq 'length') - 1 ))
     for image in $(seq 0 $images); do
         private=$(echo $config | jq -r .[$image].private)
+        reg=$(echo $config | jq -r .[$image].registry)
         if [ "$private" == "true" ]; then
             user=$(echo $config | jq -r .[$image].config)
-            reg=$(echo $config | jq -r .[$image].registry)
             cp /root/.docker/${user}/config.json /root/.docker/config.json
             docker login ${reg} &> /dev/null
         fi
