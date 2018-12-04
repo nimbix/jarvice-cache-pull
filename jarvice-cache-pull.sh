@@ -51,6 +51,7 @@ while true; do
             user=$(echo $config | jq -r .[$image].config)
             reg=$(echo $config | jq -r .[$image].registry)
             docker login --config "/root/.docker/${user}" ${reg} &> /dev/null
+        fi
         pull_image=$(echo $config | jq -r .[$image].arch.$arch)
         if [ "${pull_image}" != "null" ]; then
             echo "Pulling ${pull_image} from ${reg}"
