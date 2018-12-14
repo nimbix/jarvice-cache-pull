@@ -2,7 +2,6 @@ apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
   name: jarvice-cache-pull  
-  namespace: jarvice-testing
 spec:
   template:
     metadata:
