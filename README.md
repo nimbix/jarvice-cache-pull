@@ -106,7 +106,7 @@ kubectl --namespace=<namespace> create configmap image-cache --from-file config/
 ```
 3) Create Daemon Set
 ```
-kubectl create -f jarvice-cache-pull.yaml
+kubectl --namespace=<namespace> create -f jarvice-cache-pull.yaml
 ```
 
 ### Update Image Cache
