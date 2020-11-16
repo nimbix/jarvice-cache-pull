@@ -1,0 +1,21 @@
+#!/bin/bash
+
+[ -n "$1" ] && TAG_VERSION="$1"
+
+LSB_REL_NAME=bionic
+
+REGISTRY=gcr.io
+REPOSITORY=jarvice
+IMAGE=jarvice-cache-pull
+PLATFORMS="linux/amd64,linux/ppc64le,linux/arm64"
+
+BUILDER=multiarch
+
+export DOCKER_CLI_EXPERIMENTAL=enabled
+docker buildx build --rm \
+    --builder $BUILDER \
+    --platform $PLATFORMS --push \
+    --build-arg LSB_REL_NAME=$LSB_REL_NAME \
+    -t $REGISTRY/$REPOSITORY/$IMAGE:${TAG_VERSION} \
+    -f Dockerfile .
+
