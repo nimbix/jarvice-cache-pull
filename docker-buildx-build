@@ -4,8 +4,8 @@
 
 LSB_REL_NAME=bionic
 
-REGISTRY=gcr.io
-REPOSITORY=jarvice
+REGISTRY=us-docker.pkg.dev
+REPOSITORY=jarvice/images
 IMAGE=jarvice-cache-pull
 PLATFORMS="linux/amd64,linux/ppc64le,linux/arm64"
 
